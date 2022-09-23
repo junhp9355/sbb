@@ -7,6 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class SbbApplicationTests {
@@ -29,4 +33,38 @@ class SbbApplicationTests {
 		this.questionRepository.save(q2);
 	}
 
+	@Test
+	void getAll() {
+		// SELECT * FROM question;
+		List<Question> all = questionRepository.findAll();
+		assertEquals(4, all.size());
+
+		Question q = all.get(0);
+		assertEquals("sbb가 무엇인가요?", q.getSubject());
+	}
+
+	@Test
+	void getQuestionById() {
+		Optional<Question> oq = questionRepository.findById(1);
+		if(oq.isPresent()) {
+			Question q = oq.get();
+			assertEquals("sbb가 무엇인가요?", q.getSubject());
+		}
+	}
+
+	// "sbb가 무엇인가요?"라는 데이터가 2개 존재할 경우
+	// getQuestionBySubject() 는 에러가 발생 >>> 해당 데이터가 2개 존재하기 때문에
+	// >> getQuestionsBySubject() 처럼 List로 받아오면 오류X
+	@Test
+	void getQuestionBySubject() {
+		// findBySubject는 원래 없는 method, 이때 Ctrl+1을 눌러 method를 만들어준다.
+		Question q = questionRepository.findBySubject("sbb가 무엇인가요?");
+		assertEquals(1, q.getId());
+	}
+
+	@Test
+	void getQuestionsBySubject() {
+		List<Question> questions = this.questionRepository.findAllBySubject("sbb가 무엇인가요?");
+		assertEquals(2, questions.size());
+	}
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ class SbbApplicationTests {
 		List<Question> all = questionRepository.findAll();
 		assertEquals(4, all.size());
 
-		Question q = all.get(0);
+		Question q = all.get(1);
 		assertEquals("sbb가 무엇인가요?", q.getSubject());
 	}
 
@@ -66,5 +67,15 @@ class SbbApplicationTests {
 	void getQuestionsBySubject() {
 		List<Question> questions = this.questionRepository.findAllBySubject("sbb가 무엇인가요?");
 		assertEquals(2, questions.size());
+	}
+
+	// 2가지 조건으로 데이터 조회
+	@Test
+	void getQuestionByTwoSubject() {
+		List<String> searchWordList = new ArrayList<>();
+		searchWordList.add("sbb가 무엇인가요?");
+		searchWordList.add("스프링부트 모델 질문입니다.?");
+		List<Question> questions = this.questionRepository.findAllBySubjectIn(searchWordList);
+		assertEquals(4, questions.size());
 	}
 }

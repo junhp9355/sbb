@@ -1,7 +1,7 @@
 package com.mysite.sbb.question.domain;
 
 
-import com.mysite.sbb.answer.Answer;
+import com.mysite.sbb.answer.domain.Answer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +25,7 @@ public class Question {
 
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Answer> answerList;
 
 }

@@ -2,7 +2,12 @@ server:
     port: 8082
 
 spring:
-
+    devtools:
+        livereload:
+            enabled: true
+    thymeleaf:
+        prefix: file:src/main/resources/templates/
+        cache: false
     datasource:
         driver-class-name: com.mysql.cj.jdbc.Driver
         url: jdbc:mysql://localhost:3306/sbb?useUnicode=true&characterEncoding=utf8&autoReconnect=true&serverTimezone=Asia/Seoul&useOldAliasMetadataBehavior=true&zeroDateTimeNehavior=convertToNull
@@ -15,7 +20,7 @@ spring:
                 format_sql: true
                 use_sql_comments: true
         hibernate:
-        ddl-auto: create
+#        ddl-auto: create
 
 logging:
     level:

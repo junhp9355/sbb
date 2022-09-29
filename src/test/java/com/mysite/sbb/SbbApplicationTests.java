@@ -1,11 +1,15 @@
 package com.mysite.sbb;
 
+
+import com.mysite.sbb.answer.dao.AnswerRepository;
+import com.mysite.sbb.answer.domain.Answer;
 import com.mysite.sbb.question.dao.QuestionRepository;
 import com.mysite.sbb.question.domain.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,5 +81,75 @@ class SbbApplicationTests {
 		searchWordList.add("스프링부트 모델 질문입니다.?");
 		List<Question> questions = this.questionRepository.findAllBySubjectIn(searchWordList);
 		assertEquals(4, questions.size());
+	}
+
+	// subject 와 content 둘다 만족하는 데이터 찾기
+	@Test
+	void getQuestionBySubjectAndContent() {
+		List<Question> questions = questionRepository.findBySubjectAndContent("sbb가 무엇인가요?", "sbb에 대해 알고 싶습니다.");
+		assertEquals(2, questions.size());
+	}
+
+
+	// subject 내용에 특정 내용을 포함한 데이터 찾기
+	@Test
+	void getQuestionHaveStrings() {
+		List<Question> questions = questionRepository.findBySubjectLike("sbb%");
+		assertEquals(2, questions.size());
+	}
+
+	// 데이터 수정하기
+	@Test
+	void updateQuestion() {
+		Optional<Question> oq = questionRepository.findById(2);
+		if(oq.isPresent()) {
+			Question question = oq.get();
+			question.setSubject("수정된 질문");
+			question.setContent("수정된 내용");
+			questionRepository.save(question);
+		}
+	}
+
+	// 데이터 삭제하기
+	@Test
+	void deleteQuestion() {
+		assertEquals(5,questionRepository.count());
+		Optional<Question> oq = questionRepository.findById(1);
+		if(oq.isPresent()) {
+			Question question = oq.get();
+			questionRepository.delete(question);
+		}
+		assertEquals(4, questionRepository.count());
+	}
+
+	// 답변 생성하기
+
+	@Autowired
+	private AnswerRepository answerRepository;
+
+	@Test
+	void createAnswer() {
+		Optional<Question> oq = questionRepository.findById(2);
+		if(oq.isPresent()) {
+			Question question = oq.get();
+
+			Answer answer = new Answer();
+			answer.setContent("답변입니다.");
+			answer.setQuestion(question);
+			answer.setCreateDate(LocalDateTime.now());
+			answerRepository.save(answer);
+		}
+	}
+
+	// 답변이 달린 질문 조회하기
+	@Test
+	@Transactional
+	void getAnswerByQuestion() {
+		Optional<Question> oq = questionRepository.findById(2);
+		if(oq.isPresent()){
+			Question question = oq.get();
+			List<Answer> answerList = question.getAnswerList();
+			assertEquals(1, answerList.size());
+		}
 	}
 }
